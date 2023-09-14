@@ -8,8 +8,12 @@ import Cart from '../Cart/Cart';
 
 const Home = () => {
 
-    const[allActors, setAllActors] = useState([]);
+    const [allActors, setAllActors] = useState([]);
     const [selectedActors, setSelectedActors] = useState([]);
+    const [remaining, setRemaining] = useState(0);
+    const [totalCost, setTotalCost] = useState(0);
+
+    const budget = 20000;
 
     useEffect(() => {
         fetch("./data.json")
@@ -19,11 +23,24 @@ const Home = () => {
 
     const handleSelectActor = (actor) => {
         const isExist = selectedActors.find((item) => item.id == actor.id);
+        let cost = actor.salary;
 
         if(isExist){
             return alert("Already Booked");
         }
         else{
+            selectedActors.forEach((item) => {
+                cost = cost + item.salary;
+            });
+            // console.log(count)
+
+            const totalRemaining = budget - cost;
+            
+            if(cost > 20000){
+                return alert("Out of Budget!!");
+            }
+            setTotalCost(cost);
+            setRemaining(totalRemaining);
             setSelectedActors([...selectedActors, actor]);
         }
     };
@@ -52,7 +69,7 @@ const Home = () => {
                     }
                 </div>
                 <div className='cart'>
-                    <Cart selectedActors={selectedActors}></Cart>
+                    <Cart selectedActors={selectedActors} remaining={remaining} totalCost={totalCost}></Cart>
                 </div>
             </div>
         </div>
